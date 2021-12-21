@@ -1,1 +1,2 @@
-"# WordGuesser" 
+# WordGuesser
+## Read me
