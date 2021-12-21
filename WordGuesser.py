@@ -33,9 +33,11 @@ def SelectWord(dictionary):
 
 ## Initialize the displaylist object which says which character of the word to display in the clue
 def InitDisplayList(Word):
-    DisplayList = list()
-    for char in Word:
-        DisplayList.append(False)
+    # Initialize as the Word to get the right length
+    DisplayList = list(Word)
+    # Set all of the values to False so no characters are displayed
+    for index, char in enumerate(Word):
+        DisplayList[index] = False
     
     return DisplayList
 
@@ -44,11 +46,12 @@ def InitDisplayList(Word):
 def ShowWord(Word, DisplayList):
     # Create the Displayed version of the word starting with the Word characters
     # Change to add '_' where DisplayList is False 
+    # Convert to a list because strings are immutable 
     DisplayWord = list(Word)
     for index, char in enumerate(Word):
         if not DisplayList[index]:
             DisplayWord[index] = "_"
-
+    # Convert the list back into a string after we are done changing values
     joined_string = " ".join(DisplayWord)
     # Show DisplayWord as a Clue
     print("Clue: %s (%d letters remaining)" %
