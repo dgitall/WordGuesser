@@ -1,0 +1,13 @@
+{
+    "LoadingDictionary": "Loading Dictionary...",
+    "ClueMessage": "Clue: {joined_string} ({rem_letters} letters remaining)",
+    "InputPrompt": "Enter a letter or guess the word: ",
+    "CharError": "Only Characters...Try Again. Enter a letter or guess the word: ",
+    "GameOver": "Sorry....Game Over. Better luck next time.",
+    "Success": "Congratulations!!!! You have successfully guessed the word",
+    "RoundMsg": "Round: {TurnCounter + 1}/{MaxTurns}",
+    "ResultsMsg": " The word was: {Word} ({sum(DisplayList)}/{len(DisplayList)} correct letters)",
+    "PlayAgain": "Would you like to play again? (y/n)",
+    "GameResults": "You won {WinCount} out of {GameCount} games",
+    "Goodbye": "Goodbye"
+}

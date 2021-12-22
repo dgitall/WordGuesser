@@ -1,11 +1,31 @@
+import json
 import random
 from urllib.request import urlopen
+
+# Load the string dictionary from the JSON file
+StringDictionary = {}
+with open('stringfile.json') as json_file:
+    StringDictionary = json.load(json_file)
+
+# Function to evaluate the loaded f-strings. This is necessary because you can't include
+# dictionary keys if doing it inline due to interference with single and double quotes.
+# Taken from: https://stackoverflow.com/questions/47597831/python-fstring-as-function
+def fstr(fstring_text, locals, globals=None):
+    """
+    Dynamically evaluate the provided fstring_text
+    """
+    locals = locals or {}
+    globals = globals or {}
+    ret_val = eval(f'f"{fstring_text}"', locals, globals)
+    return ret_val
+
 
 ## Open a file from a github repository containing a bunch of words
 ## Load this into our internal dictionary
 def OpenDictionary():
     dictionary = dict()
-    print("Loading dictionary...")
+
+    print(fstr(StringDictionary['LoadingDictionary'], locals()))
    
     with urlopen("https://github.com/dwyl/english-words/blob/master/words_alpha.txt?raw=true") as data:
         # Transform the bitstream into strings
@@ -53,9 +73,9 @@ def ShowWord(Word, DisplayList):
             DisplayWord[index] = "_"
     # Convert the list back into a string after we are done changing values
     joined_string = " ".join(DisplayWord)
+    rem_letters = len(DisplayList)-sum(DisplayList)
     # Show DisplayWord as a Clue
-    print("Clue: %s (%d letters remaining)" %
-          (joined_string, len(DisplayList)-sum(DisplayList)))
+    print(fstr(StringDictionary['ClueMessage'], locals()))
     
 ## Check to see if UserInput matches any letters in Word. Where it does, se DisplayList to True
 def CheckChar(Word, DisplayList, UserInput):
@@ -71,18 +91,18 @@ def CheckChar(Word, DisplayList, UserInput):
 def GetUserInput():
     UserInput = str()
     GetInput = True
-    Message = "Enter a letter or guess the word: "
+    Message = StringDictionary['InputPrompt']
     
     while GetInput:
         # Prompt User Entry
         Entry = input(Message)
         # Is entry length > 0
         if len(Entry) <= 0:
-            Message = "Enter a letter or guess the word: "
+            Message = StringDictionary['InputPrompt']
         else:
             # Is entry a string?
             if Entry.isnumeric():
-                Message = "Only Characters...Try Again. Enter a letter or guess the word: "
+                Message = StringDictionary['CharError']
             else:
                 # Valid input received so exit the loop
                 UserInput = Entry
@@ -107,14 +127,15 @@ while PlayingGame:
     DisplayList = InitDisplayList(Word)
 
     TurnCounter = 0
+    MaxTurns = 7
     WinCount = 0
     GameCount += 1
-    GameMessage = "Sorry....Game Over. Better luck next time."
-    SuccessMessage = "Congratulations!!!! You have successfully guessed the word"
+    GameMessage = StringDictionary['GameOver']
+    SuccessMessage = StringDictionary['Success']
     ## Give the player 7 tries to guess the word. 
     while TurnCounter < 7:
         ## Display the clue
-        print("Round: %s" % (TurnCounter + 1))
+        print(fstr(StringDictionary['RoundMsg'], locals()))
         ShowWord(Word, DisplayList)
         # Get the users guess
         UserInput = GetUserInput()
@@ -137,11 +158,10 @@ while PlayingGame:
                 WinCount += 1
                 break
             
-    print(GameMessage + " The word was: %s (%s/%s correct words)" % 
-          (Word, sum(DisplayList), len(DisplayList)))
-    PlayAgain = input("Would you like to play again? (y/n)")
+    print(GameMessage + fstr(StringDictionary['ResultsMsg'], locals()))
+    PlayAgain = input(StringDictionary['PlayAgain'])
     if(PlayAgain != 'y'):
-        print("You won %s out of %s games" % (WinCount, GameCount))
-        print("Goodbye")
+        print(fstr(StringDictionary['GameResults'], locals()))
+        print(StringDictionary['Goodbye'])
         PlayingGame = False
             
